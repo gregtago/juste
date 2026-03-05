@@ -57,13 +57,13 @@ app.post("/api/generate", upload.fields([{ name: "file", maxCount: 1 }, { name: 
     });
 
     if (!verifyResult.success || verifyResult.score < 0.3) {
-      return res.status(403).json({ error: "Verification anti-robot echouee. Veuillez reessayer." });
+      return res.status(403).json({ error: "Vérification anti-robot échouée. Veuillez réessayer." });
     }
 
     const apiKey = process.env.ANTHROPIC_API_KEY;
-    if (!apiKey) return res.status(500).json({ error: "Cle API manquante" });
+    if (!apiKey) return res.status(500).json({ error: "Clé API manquante" });
     const file = req.files?.file?.[0];
-    if (!file) return res.status(400).json({ error: "Aucun fichier recu" });
+    if (!file) return res.status(400).json({ error: "Aucun fichier reçu" });
 
     const base64 = file.buffer.toString("base64");
     const isPdf = file.mimetype === "application/pdf";
@@ -82,7 +82,7 @@ app.post("/api/generate", upload.fields([{ name: "file", maxCount: 1 }, { name: 
         role: "user",
         content: [
           contentBlock,
-          { type: "text", text: "Extrais toutes les personnes physiques identifiees dans ce document et genere le XML iNot complet." }
+          { type: "text", text: "Extrais toutes les personnes physiques identifiées dans ce document et génère le XML iNot complet." }
         ]
       }]
     });

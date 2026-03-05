@@ -45,24 +45,24 @@
 <body>
   <div class="wrap">
     <span class="logo">Juste</span>
-    <p class="page-sub">Deposez un document d'identite ou un extrait de comparution. Le fichier XML est genere automatiquement. Il vous suffit de l'importer dans iNot via l'outil d'import genealogiste.</p>
+    <p class="page-sub">Déposez un document d'identité ou un extrait de comparution. Le fichier XML est généré automatiquement. Il vous suffit de l'importer dans iNot via l'outil d'import généalogiste.</p>
 
     <div id="form-section">
       <span class="field-label">Document</span>
       <div class="dropzone" id="dropzone">
         <input type="file" id="file-input" accept="image/*,.pdf" style="display:none" />
-        <p class="dz-main" id="dz-text">Deposer ou <strong>parcourir</strong></p>
+        <p class="dz-main" id="dz-text">Déposer ou <strong>parcourir</strong></p>
         <p class="dz-hint" id="dz-hint">JPG · PNG · PDF</p>
       </div>
       <p class="error-msg hidden" id="error-msg"></p>
-      <button class="btn-gen" id="btn-gen" disabled>Generer</button>
-      <p class="loading-note hidden" id="loading-note">Extraction des donnees en cours...</p>
+      <button class="btn-gen" id="btn-gen" disabled>Générer</button>
+      <p class="loading-note hidden" id="loading-note">Extraction des données en cours...</p>
     </div>
 
     <div id="result-section" class="hidden">
       <div class="result-bar">
-        <button class="btn-sm" id="btn-copy">Copier</button>
-        <button class="btn-sm dark" id="btn-download">Telecharger</button>
+        <button class="btn-sm" id="btn-copy">Copiér</button>
+        <button class="btn-sm dark" id="btn-download">Télécharger</button>
       </div>
       <pre class="xml-pre" id="xml-output"></pre>
       <p class="file-note" id="file-note"></p>
@@ -71,27 +71,27 @@
   </div>
 
   <footer>
-    <span>Juste &middot; Usage interne au cabinet</span><br>
+    <span>Juste · Usage interne au cabinet</span><br>
     <a href="#" id="rgpd-link" style="color:#ccc;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:underline;margin-top:.3rem;display:inline-block;">Mentions RGPD</a>
   </footer>
 
   <div id="rgpd-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;">
     <div style="background:#fff;border-radius:6px;max-width:540px;width:90%;padding:2.5rem;position:relative;max-height:85vh;overflow-y:auto;margin:auto;margin-top:5vh;">
       <button id="rgpd-close" style="position:absolute;top:1rem;right:1.2rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#999;">&#x2715;</button>
-      <h2 style="font-size:1rem;font-weight:400;margin-bottom:1.5rem;">Information sur le traitement des donnees</h2>
+      <h2 style="font-size:1rem;font-weight:400;margin-bottom:1.5rem;">Information sur le traitement des données</h2>
       <div style="font-size:.88rem;color:#555;line-height:1.8;">
         <p style="margin-bottom:1rem;"><strong style="color:#111;font-weight:500;">Responsable du traitement</strong><br>
-        Cet outil est mis en oeuvre par le cabinet notarial pour un usage strictement interne. Il ne collecte aucune donnee a des fins commerciales.</p>
-        <p style="margin-bottom:1rem;"><strong style="color:#111;font-weight:500;">Donnees traitees</strong><br>
-        Les documents deposes (pieces d'identite, extraits de comparution) sont transmis a l'API Anthropic afin de proceder a l'extraction automatique des informations necessaires a la creation de fiches clients dans le logiciel iNot.</p>
+        Cet outil est mis en œuvre par le cabinet notarial pour un usage strictement interne. Il ne collecte aucune donnée à des fins commerciales.</p>
+        <p style="margin-bottom:1rem;"><strong style="color:#111;font-weight:500;">Données traitées</strong><br>
+        Les documents déposés (pièces d'identité, extraits de comparution) sont transmis à l'API Anthropic afin de procéder à l'extraction automatique des informations nécessaires à la création de fiches clients dans le logiciel iNot.</p>
         <p style="margin-bottom:1rem;"><strong style="color:#111;font-weight:500;">Sous-traitant : Anthropic</strong><br>
-        Anthropic (San Francisco, Etats-Unis) traite les donnees en qualite de sous-traitant. Conformement a sa politique API, les donnees transmises ne sont pas utilisees pour l'entrainement de ses modeles et ne sont pas conservees au-dela de 30 jours. Les transferts vers les Etats-Unis sont encadres par les clauses contractuelles types de la Commission europeenne.</p>
-        <p style="margin-bottom:1rem;"><strong style="color:#111;font-weight:500;">Hebergement</strong><br>
-        L'application est hebergee sur Render (San Francisco, Etats-Unis). Les fichiers deposes ne sont jamais ecrits sur disque et sont supprimes de la memoire immediatement apres traitement. Seuls des journaux techniques (date, heure, taille des requetes) sont conserves par Render.</p>
-        <p style="margin-bottom:1rem;"><strong style="color:#111;font-weight:500;">Base legale</strong><br>
-        Le traitement est fonde sur l'interet legitime du cabinet a automatiser la saisie de donnees dans le cadre de l'exercice de sa mission notariale.</p>
+        Anthropic (San Francisco, États-Unis) traite les données en qualité de sous-traitant. Conformément à sa politique API, les données transmises ne sont pas utilisées pour l'entraînement de ses modèles et ne sont pas conservées au-delà de 30 jours. Les transferts vers les États-Unis sont encadrés par les clauses contractuelles types de la Commission européenne.</p>
+        <p style="margin-bottom:1rem;"><strong style="color:#111;font-weight:500;">Hébergement</strong><br>
+        L'application est hébergée sur Render (San Francisco, États-Unis). Les fichiers déposés ne sont jamais écrits sur disque et sont supprimés de la mémoire immédiatement après traitement. Seuls des journaux techniques (date, heure, taille des requêtes) sont conservés par Render.</p>
+        <p style="margin-bottom:1rem;"><strong style="color:#111;font-weight:500;">Base légale</strong><br>
+        Le traitement est fondé sur l'intérêt légitime du cabinet à automatiser la saisie de données dans le cadre de l'exercice de sa mission notariale.</p>
         <p><strong style="color:#111;font-weight:500;">Droits des personnes</strong><br>
-        Toute personne concernee peut exercer ses droits d'acces, de rectification et d'effacement aupres du cabinet notarial. Compte tenu de l'absence de conservation des donnees au-dela du traitement immediat, ces droits s'exercent principalement aupres d'Anthropic via <a href="https://www.anthropic.com/privacy" target="_blank" style="color:#111;">anthropic.com/privacy</a>.</p>
+        Toute personne concernée peut exercer ses droits d'accès, de rectification et d'effacement auprès du cabinet notarial. Compte tenu de l'absence de conservation des données au-delà du traitement immédiat, ces droits s'exercent principalement auprès d'Anthropic via <a href="https://www.anthropic.com/privacy" target="_blank" style="color:#111;">anthropic.com/privacy</a>.</p>
       </div>
     </div>
   </div>
@@ -134,15 +134,15 @@
 
     btnGen.addEventListener('click', async () => {
       if (!currentFile) return;
-      btnGen.innerHTML = '<span class="spinner"></span>Verification...';
+      btnGen.innerHTML = '<span class="spinner"></span>Vérification...';
       btnGen.disabled = true;
       let token = '';
       try {
         token = await grecaptcha.execute('6LfgwYAsAAAAAPXy207oQrJStVbf9kg25OLw5ved', { action: 'generate' });
       } catch(e) {
-        errorMsg.textContent = 'Erreur CAPTCHA, veuillez reessayer.';
+        errorMsg.textContent = 'Erreur CAPTCHA, veuillez réessayer.';
         errorMsg.classList.remove('hidden');
-        btnGen.textContent = 'Generer';
+        btnGen.textContent = 'Générer';
         btnGen.disabled = false;
         return;
       }
@@ -172,7 +172,7 @@
       } catch (e) {
         errorMsg.textContent = e.message;
         errorMsg.classList.remove('hidden');
-        btnGen.textContent = 'Generer';
+        btnGen.textContent = 'Générer';
         btnGen.disabled = false;
       } finally {
         loadingNote.classList.add('hidden');
@@ -181,8 +181,8 @@
 
     btnCopy.addEventListener('click', () => {
       navigator.clipboard.writeText(currentXml);
-      btnCopy.textContent = 'Copie';
-      setTimeout(() => btnCopy.textContent = 'Copier', 2000);
+      btnCopy.textContent = 'Copié';
+      setTimeout(() => btnCopy.textContent = 'Copiér', 2000);
     });
 
     btnDownload.addEventListener('click', () => {
@@ -195,10 +195,10 @@
 
     btnReset.addEventListener('click', () => {
       currentFile = null; currentXml = ''; currentFilename = '';
-      dzText.innerHTML = 'Deposer ou <strong>parcourir</strong>';
+      dzText.innerHTML = 'Déposer ou <strong>parcourir</strong>';
       dzHint.textContent = 'JPG · PNG · PDF';
       dropzone.classList.remove('has-file');
-      btnGen.textContent = 'Generer';
+      btnGen.textContent = 'Générer';
       btnGen.disabled = true;
       fileInput.value = '';
       formSection.classList.remove('hidden');
