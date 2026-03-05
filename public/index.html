@@ -75,7 +75,7 @@
     <a href="#" id="rgpd-link" style="color:#ccc;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:underline;margin-top:.3rem;display:inline-block;">Mentions RGPD</a>
   </footer>
 
-  <div id="rgpd-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;">
+  <div id="rgpd-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;">
     <div style="background:#fff;border-radius:6px;max-width:540px;width:90%;padding:2.5rem;position:relative;max-height:85vh;overflow-y:auto;margin:auto;margin-top:5vh;">
       <button id="rgpd-close" style="position:absolute;top:1rem;right:1.2rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#999;">&#x2715;</button>
       <h2 style="font-size:1rem;font-weight:400;margin-bottom:1.5rem;">Information sur le traitement des donnees</h2>
@@ -209,7 +209,7 @@
 
     // RGPD modal
     const rgpdModal = document.getElementById('rgpd-modal');
-    document.getElementById('rgpd-link').addEventListener('click', e => { e.preventDefault(); rgpdModal.style.display = 'flex'; });
+    document.getElementById('rgpd-link').addEventListener('click', e => { e.preventDefault(); rgpdModal.style.display = 'block'; });
     document.getElementById('rgpd-close').addEventListener('click', () => { rgpdModal.style.display = 'none'; });
     rgpdModal.addEventListener('click', e => { if (e.target === rgpdModal) rgpdModal.style.display = 'none'; });
   </script>
