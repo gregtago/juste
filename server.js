@@ -2,6 +2,7 @@ const express = require("express");
 const multer = require("multer");
 const Anthropic = require("@anthropic-ai/sdk");
 const path = require("path");
+const https = require("https");
 
 const app = express();
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
@@ -30,15 +31,43 @@ IMPORTANT : Reponds UNIQUEMENT avec le XML brut, sans markdown, sans explication
 
 app.use(express.static(path.join(__dirname, "public")));
 
-app.post("/api/generate", upload.single("file"), async (req, res) => {
+app.post("/api/generate", upload.fields([{ name: "file", maxCount: 1 }, { name: "recaptchaToken", maxCount: 1 }]), async (req, res) => {
   try {
+    // Verification reCAPTCHA
+    const token = req.body?.recaptchaToken;
+    if (!token) return res.status(400).json({ error: "Token CAPTCHA manquant" });
+
+    const secretKey = process.env.RECAPTCHA_SECRET_KEY || "6LfgwYAsAAAAAO6TFfKMMtSoBmIadpc6fticsp9I";
+    const verifyResult = await new Promise((resolve) => {
+      const postData = `secret=${secretKey}&response=${token}`;
+      const options = {
+        hostname: "www.google.com",
+        path: "/recaptcha/api/siteverify",
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded", "Content-Length": Buffer.byteLength(postData) }
+      };
+      const reqHttp = https.request(options, (res2) => {
+        let data = "";
+        res2.on("data", chunk => data += chunk);
+        res2.on("end", () => resolve(JSON.parse(data)));
+      });
+      reqHttp.on("error", () => resolve({ success: false }));
+      reqHttp.write(postData);
+      reqHttp.end();
+    });
+
+    if (!verifyResult.success || verifyResult.score < 0.3) {
+      return res.status(403).json({ error: "Verification anti-robot echouee. Veuillez reessayer." });
+    }
+
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) return res.status(500).json({ error: "Cle API manquante" });
-    if (!req.file) return res.status(400).json({ error: "Aucun fichier recu" });
+    const file = req.files?.file?.[0];
+    if (!file) return res.status(400).json({ error: "Aucun fichier recu" });
 
-    const base64 = req.file.buffer.toString("base64");
-    const isPdf = req.file.mimetype === "application/pdf";
-    const mediaType = isPdf ? "application/pdf" : (req.file.mimetype || "image/jpeg");
+    const base64 = file.buffer.toString("base64");
+    const isPdf = file.mimetype === "application/pdf";
+    const mediaType = isPdf ? "application/pdf" : (file.mimetype || "image/jpeg");
 
     const contentBlock = isPdf
       ? { type: "document", source: { type: "base64", media_type: "application/pdf", data: base64 } }

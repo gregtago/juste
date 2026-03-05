@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <script src="https://www.google.com/recaptcha/api.js?render=6LfgwYAsAAAAAPXy207oQrJStVbf9kg25OLw5ved"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { min-height: 100vh; background: #fff; font-family: 'DM Sans', sans-serif; font-weight: 300; color: #111; }
@@ -133,6 +134,23 @@
 
     btnGen.addEventListener('click', async () => {
       if (!currentFile) return;
+      btnGen.innerHTML = '<span class="spinner"></span>Verification...';
+      btnGen.disabled = true;
+      let token = '';
+      try {
+        token = await grecaptcha.execute('6LfgwYAsAAAAAPXy207oQrJStVbf9kg25OLw5ved', { action: 'generate' });
+      } catch(e) {
+        errorMsg.textContent = 'Erreur CAPTCHA, veuillez reessayer.';
+        errorMsg.classList.remove('hidden');
+        btnGen.textContent = 'Generer';
+        btnGen.disabled = false;
+        return;
+      }
+      // on continue avec le vrai handler
+      await doGenerate(token);
+    });
+
+    async function doGenerate(recaptchaToken) {
       btnGen.innerHTML = '<span class="spinner"></span>Analyse en cours';
       btnGen.disabled = true;
       loadingNote.classList.remove('hidden');
@@ -141,6 +159,7 @@
       try {
         const fd = new FormData();
         fd.append('file', currentFile);
+        fd.append('recaptchaToken', recaptchaToken);
         const res = await fetch('/api/generate', { method: 'POST', body: fd });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Erreur serveur');
@@ -185,6 +204,8 @@
       formSection.classList.remove('hidden');
       resultSection.classList.add('hidden');
     });
+
+    } // fin doGenerate
 
     // RGPD modal
     const rgpdModal = document.getElementById('rgpd-modal');
