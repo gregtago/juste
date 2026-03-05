@@ -69,7 +69,31 @@
     </div>
   </div>
 
-  <footer>Juste · Les donnees ne sont pas conservees · Usage interne</footer>
+  <footer>
+    <span>Juste &middot; Usage interne au cabinet</span><br>
+    <a href="#" id="rgpd-link" style="color:#ccc;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:underline;margin-top:.3rem;display:inline-block;">Mentions RGPD</a>
+  </footer>
+
+  <div id="rgpd-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:6px;max-width:540px;width:90%;padding:2.5rem;position:relative;max-height:85vh;overflow-y:auto;margin:auto;margin-top:5vh;">
+      <button id="rgpd-close" style="position:absolute;top:1rem;right:1.2rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#999;">&#x2715;</button>
+      <h2 style="font-size:1rem;font-weight:400;margin-bottom:1.5rem;">Information sur le traitement des donnees</h2>
+      <div style="font-size:.78rem;color:#555;line-height:1.8;">
+        <p style="margin-bottom:1rem;"><strong style="color:#111;font-weight:500;">Responsable du traitement</strong><br>
+        Cet outil est mis en oeuvre par le cabinet notarial pour un usage strictement interne. Il ne collecte aucune donnee a des fins commerciales.</p>
+        <p style="margin-bottom:1rem;"><strong style="color:#111;font-weight:500;">Donnees traitees</strong><br>
+        Les documents deposes (pieces d'identite, extraits de comparution) sont transmis a l'API Anthropic afin de proceder a l'extraction automatique des informations necessaires a la creation de fiches clients dans le logiciel iNot.</p>
+        <p style="margin-bottom:1rem;"><strong style="color:#111;font-weight:500;">Sous-traitant : Anthropic</strong><br>
+        Anthropic (San Francisco, Etats-Unis) traite les donnees en qualite de sous-traitant. Conformement a sa politique API, les donnees transmises ne sont pas utilisees pour l'entrainement de ses modeles et ne sont pas conservees au-dela de 30 jours. Les transferts vers les Etats-Unis sont encadres par les clauses contractuelles types de la Commission europeenne.</p>
+        <p style="margin-bottom:1rem;"><strong style="color:#111;font-weight:500;">Hebergement</strong><br>
+        L'application est hebergee sur Render (San Francisco, Etats-Unis). Les fichiers deposes ne sont jamais ecrits sur disque et sont supprimes de la memoire immediatement apres traitement. Seuls des journaux techniques (date, heure, taille des requetes) sont conserves par Render.</p>
+        <p style="margin-bottom:1rem;"><strong style="color:#111;font-weight:500;">Base legale</strong><br>
+        Le traitement est fonde sur l'interet legitime du cabinet a automatiser la saisie de donnees dans le cadre de l'exercice de sa mission notariale.</p>
+        <p><strong style="color:#111;font-weight:500;">Droits des personnes</strong><br>
+        Toute personne concernee peut exercer ses droits d'acces, de rectification et d'effacement aupres du cabinet notarial. Compte tenu de l'absence de conservation des donnees au-dela du traitement immediat, ces droits s'exercent principalement aupres d'Anthropic via <a href="https://www.anthropic.com/privacy" target="_blank" style="color:#111;">anthropic.com/privacy</a>.</p>
+      </div>
+    </div>
+  </div>
 
   <script>
     let currentFile = null;
@@ -161,6 +185,12 @@
       formSection.classList.remove('hidden');
       resultSection.classList.add('hidden');
     });
+
+    // RGPD modal
+    const rgpdModal = document.getElementById('rgpd-modal');
+    document.getElementById('rgpd-link').addEventListener('click', e => { e.preventDefault(); rgpdModal.style.display = 'flex'; });
+    document.getElementById('rgpd-close').addEventListener('click', () => { rgpdModal.style.display = 'none'; });
+    rgpdModal.addEventListener('click', e => { if (e.target === rgpdModal) rgpdModal.style.display = 'none'; });
   </script>
 </body>
 </html>
