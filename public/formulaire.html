@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Juste — Questionnaire d'état civil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { min-height: 100vh; background: #fafafa; font-family: 'DM Sans', sans-serif; font-weight: 300; color: #111; }
+    .page { max-width: 680px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+
+    /* Header */
+    .logo { font-size: 2.5rem; font-weight: 300; letter-spacing: -.04em; color: #111; display: block; margin-bottom: .25rem; text-decoration: none; }
+    .logo-sub { font-size: .85rem; color: #999; margin-bottom: 2.5rem; display: block; }
+
+    /* Tabs personnes */
+    .tabs-bar { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid #eee; }
+    .tab { padding: .45rem 1.1rem; border: 1px solid #e0e0e0; border-radius: 20px; cursor: pointer; font-size: .82rem; color: #888; background: #fff; transition: all .15s; font-family: 'DM Sans', sans-serif; }
+    .tab.active { border-color: #111; background: #111; color: #fff; }
+    .tab-add { padding: .45rem 1rem; border: 1px dashed #ccc; border-radius: 20px; cursor: pointer; font-size: .82rem; color: #aaa; background: transparent; transition: all .15s; font-family: 'DM Sans', sans-serif; }
+    .tab-add:hover { border-color: #555; color: #555; }
+    .tab-del { padding: .45rem .8rem; border: 1px solid #eee; border-radius: 20px; cursor: pointer; font-size: .82rem; color: #ddd; background: #fff; transition: all .15s; font-family: 'DM Sans', sans-serif; }
+    .tab-del:hover { border-color: #e00; color: #e00; }
+
+    /* Formulaire */
+    .person-form { display: none; }
+    .person-form.active { display: block; }
+
+    .section { margin-bottom: 2.2rem; }
+    .section-label { font-size: .62rem; letter-spacing: .15em; text-transform: uppercase; color: #bbb; margin-bottom: 1rem; display: block; font-weight: 400; }
+
+    .row { display: grid; gap: 1rem; margin-bottom: 1rem; }
+    .row-2 { grid-template-columns: 1fr 1fr; }
+    .row-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .row-1 { grid-template-columns: 1fr; }
+
+    .field label { font-size: .8rem; color: #666; display: block; margin-bottom: .3rem; }
+    .field input, .field select {
+      width: 100%; padding: .6rem .8rem;
+      border: 1px solid #e8e8e8; border-radius: 4px;
+      font-family: 'DM Sans', sans-serif; font-size: .9rem; font-weight: 300; color: #111;
+      background: #fff; outline: none; transition: border-color .15s;
+    }
+    .field input:focus, .field select:focus { border-color: #aaa; }
+    .field select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23ccc'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right .8rem center; padding-right: 2rem; }
+
+    /* Situation matrimoniale */
+    .situation-tabs { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
+    .sit-btn { padding: .4rem .95rem; border: 1px solid #e0e0e0; border-radius: 20px; cursor: pointer; font-size: .8rem; color: #888; background: #fff; transition: all .15s; font-family: 'DM Sans', sans-serif; }
+    .sit-btn.active { border-color: #111; background: #111; color: #fff; }
+
+    .conditional { display: none; }
+    .conditional.show { display: block; }
+
+    /* Footer actions */
+    .actions { margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid #eee; display: flex; gap: 1rem; align-items: center; }
+    .btn-generate { padding: .75rem 2rem; background: #111; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: .85rem; font-weight: 400; letter-spacing: .08em; text-transform: uppercase; transition: background .15s; }
+    .btn-generate:hover { background: #333; }
+    .btn-generate:disabled { background: #ccc; cursor: default; }
+    .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; margin-right: .5rem; vertical-align: middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .gen-note { font-size: .78rem; color: #bbb; }
+
+    /* Résultat */
+    .result-box { margin-top: 2rem; padding: 1.5rem; background: #fff; border: 1px solid #e8e8e8; border-radius: 6px; }
+    .result-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .result-title { font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; color: #999; }
+    .btn-dl { padding: .4rem .9rem; background: #111; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; }
+    .xml-out { font-family: 'Courier New', monospace; font-size: .72rem; line-height: 1.7; color: #555; white-space: pre-wrap; word-break: break-all; max-height: 320px; overflow: auto; background: #fafafa; padding: 1rem; border-radius: 4px; }
+    .error-msg { margin-top: 1rem; padding: .75rem 1rem; background: #fff5f5; border: 1px solid #fcc; border-radius: 4px; font-size: .82rem; color: #c03030; }
+
+    /* Footer */
+    footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #f0f0f0; font-size: .75rem; color: #ccc; line-height: 1.7; }
+    footer a { color: #bbb; }
+
+    @media (max-width: 520px) {
+      .row-2, .row-3 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+  <a class="logo" href="/">Juste</a>
+  <span class="logo-sub">Questionnaire d'état civil</span>
+
+  <!-- Onglets personnes -->
+  <div class="tabs-bar" id="tabsBar">
+    <button class="tab active" data-idx="0">Personne 1</button>
+    <button class="tab-add" id="btnAddPerson">+ Ajouter une personne</button>
+  </div>
+
+  <!-- Conteneur formulaires -->
+  <div id="formsContainer"></div>
+
+  <!-- Actions -->
+  <div class="actions">
+    <button class="btn-generate" id="btnGenerate">Générer le XML</button>
+    <span class="gen-note" id="genNote"></span>
+  </div>
+
+  <!-- Résultat -->
+  <div id="resultBox" style="display:none;" class="result-box">
+    <div class="result-top">
+      <span class="result-title">Fichier XML iNot</span>
+      <button class="btn-dl" id="btnDownload">Télécharger</button>
+    </div>
+    <pre class="xml-out" id="xmlOut"></pre>
+  </div>
+  <div id="errorMsg" class="error-msg" style="display:none;"></div>
+
+  <footer>
+    <strong style="color:#999;">Juste</strong> · Usage interne au cabinet · 
+    Les données saisies sont transmises à l'API Anthropic pour la génération du XML et ne sont pas conservées.<br>
+    <a href="/">← Retour à l'outil de scan</a>
+  </footer>
+</div>
+
+<script>
+// ─── État ───────────────────────────────────────────────
+let persons = [createPerson()];
+let activeIdx = 0;
+
+function createPerson(num) {
+  return {
+    civilite: '',
+    nom: '', prenoms: '', nomNaissance: '',
+    dateNaissance: '', lieuNaissance: '', cpNaissance: '',
+    profession: '', nationalite: 'Française',
+    adresse: '', cp: '', ville: '',
+    tel: '', email: '',
+    situation: 'C',
+    // Mariage
+    dateMariage: '', cpMariage: '', villeMariage: '',
+    contratMariage: false, regime: '4',
+    // Conjoint
+    nomConjoint: '', prenomsConjoint: '',
+    // Divorce
+    tribunal: '', dateDivorce: '',
+    // Décès conjoint
+    nomVeuf: '', prenomsVeuf: '',
+    // PACS
+    datePacs: '', cpPacs: '', villePacs: '',
+    // Séparation
+    dateSep: '',
+  };
+}
+
+// ─── Rendu ───────────────────────────────────────────────
+function renderTabs() {
+  const bar = document.getElementById('tabsBar');
+  const addBtn = document.getElementById('btnAddPerson');
+  bar.innerHTML = '';
+  persons.forEach((p, i) => {
+    const label = p.nom ? p.nom.toUpperCase() : `Personne ${i + 1}`;
+    const tab = document.createElement('button');
+    tab.className = 'tab' + (i === activeIdx ? ' active' : '');
+    tab.textContent = label;
+    tab.dataset.idx = i;
+    tab.addEventListener('click', () => { activeIdx = i; renderAll(); });
+    bar.appendChild(tab);
+  });
+  bar.appendChild(addBtn);
+  if (persons.length > 1) {
+    const del = document.createElement('button');
+    del.className = 'tab-del';
+    del.textContent = '− Supprimer';
+    del.addEventListener('click', removePerson);
+    bar.appendChild(del);
+  }
+}
+
+function renderForm(p, idx) {
+  const sit = p.situation;
+  return `
+  <div class="person-form ${idx === activeIdx ? 'active' : ''}" data-idx="${idx}">
+
+    <div class="section">
+      <span class="section-label">Identité</span>
+      <div class="row row-3">
+        <div class="field">
+          <label>Civilité</label>
+          <select data-field="civilite">
+            <option value="">—</option>
+            <option value="M." ${p.civilite==='M.'?'selected':''}>Monsieur</option>
+            <option value="MME" ${p.civilite==='MME'?'selected':''}>Madame</option>
+            <option value="MELLE" ${p.civilite==='MELLE'?'selected':''}>Mademoiselle</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Nom d'usage <span style="color:#ccc;font-size:.7rem;">obligatoire</span></label>
+          <input type="text" data-field="nom" value="${esc(p.nom)}" placeholder="DUPONT" />
+        </div>
+        <div class="field">
+          <label>Nom de naissance</label>
+          <input type="text" data-field="nomNaissance" value="${esc(p.nomNaissance)}" placeholder="si différent" />
+        </div>
+      </div>
+      <div class="row row-1">
+        <div class="field">
+          <label>Prénoms</label>
+          <input type="text" data-field="prenoms" value="${esc(p.prenoms)}" placeholder="Marie Claire" />
+        </div>
+      </div>
+      <div class="row row-2">
+        <div class="field">
+          <label>Date de naissance</label>
+          <input type="date" data-field="dateNaissance" value="${p.dateNaissance}" />
+        </div>
+        <div class="field">
+          <label>Lieu de naissance</label>
+          <input type="text" data-field="lieuNaissance" value="${esc(p.lieuNaissance)}" placeholder="Paris" />
+        </div>
+      </div>
+      <div class="row row-3">
+        <div class="field">
+          <label>Code postal de naissance</label>
+          <input type="text" data-field="cpNaissance" value="${esc(p.cpNaissance)}" placeholder="75001" maxlength="5" />
+        </div>
+        <div class="field">
+          <label>Profession</label>
+          <input type="text" data-field="profession" value="${esc(p.profession)}" placeholder="Ingénieur" />
+        </div>
+        <div class="field">
+          <label>Nationalité</label>
+          <input type="text" data-field="nationalite" value="${esc(p.nationalite)}" placeholder="Française" />
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <span class="section-label">Adresse</span>
+      <div class="row row-1">
+        <div class="field">
+          <label>Adresse</label>
+          <input type="text" data-field="adresse" value="${esc(p.adresse)}" placeholder="12 rue de la Paix" />
+        </div>
+      </div>
+      <div class="row row-2">
+        <div class="field">
+          <label>Code postal</label>
+          <input type="text" data-field="cp" value="${esc(p.cp)}" placeholder="75001" maxlength="5" />
+        </div>
+        <div class="field">
+          <label>Ville</label>
+          <input type="text" data-field="ville" value="${esc(p.ville)}" placeholder="Paris" />
+        </div>
+      </div>
+      <div class="row row-2">
+        <div class="field">
+          <label>Téléphone portable</label>
+          <input type="tel" data-field="tel" value="${esc(p.tel)}" placeholder="06 12 34 56 78" />
+        </div>
+        <div class="field">
+          <label>E-mail</label>
+          <input type="email" data-field="email" value="${esc(p.email)}" placeholder="marie@email.fr" />
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <span class="section-label">Situation matrimoniale</span>
+      <div class="situation-tabs">
+        ${['C','M','D','I','V','P','S'].map(code => {
+          const labels = {C:'Célibataire',M:'Marié(e)',D:'Divorcé(e)',I:'En instance de divorce',V:'Veuf / Veuve',P:'Pacsé(e)',S:'Séparé(e) de corps'};
+          return `<button class="sit-btn ${sit===code?'active':''}" data-sit="${code}">${labels[code]}</button>`;
+        }).join('')}
+      </div>
+
+      <!-- Mariage -->
+      <div class="conditional ${['M','I','S'].includes(sit)?'show':''}" id="blk-mariage-${idx}">
+        <div class="row row-3">
+          <div class="field">
+            <label>Date du mariage</label>
+            <input type="date" data-field="dateMariage" value="${p.dateMariage}" />
+          </div>
+          <div class="field">
+            <label>Code postal du mariage</label>
+            <input type="text" data-field="cpMariage" value="${esc(p.cpMariage)}" placeholder="75001" />
+          </div>
+          <div class="field">
+            <label>Commune du mariage</label>
+            <input type="text" data-field="villeMariage" value="${esc(p.villeMariage)}" placeholder="Paris" />
+          </div>
+        </div>
+        <div class="row row-2">
+          <div class="field">
+            <label>Régime matrimonial</label>
+            <select data-field="regime">
+              <option value="4" ${p.regime==='4'?'selected':''}>Sans contrat (après 01/02/1966)</option>
+              <option value="30" ${p.regime==='30'?'selected':''}>Communauté réduite aux acquêts</option>
+              <option value="33" ${p.regime==='33'?'selected':''}>Séparation de biens</option>
+              <option value="32" ${p.regime==='32'?'selected':''}>Communauté universelle</option>
+              <option value="35" ${p.regime==='35'?'selected':''}>Participation aux acquêts</option>
+            </select>
+          </div>
+          <div class="field" style="padding-top:1.6rem;">
+            <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer;">
+              <input type="checkbox" data-field="contratMariage" ${p.contratMariage?'checked':''} style="width:auto;" />
+              Contrat de mariage établi
+            </label>
+          </div>
+        </div>
+        <div class="row row-2">
+          <div class="field">
+            <label>Nom du conjoint</label>
+            <input type="text" data-field="nomConjoint" value="${esc(p.nomConjoint)}" placeholder="MARTIN" />
+          </div>
+          <div class="field">
+            <label>Prénom(s) du conjoint</label>
+            <input type="text" data-field="prenomsConjoint" value="${esc(p.prenomsConjoint)}" placeholder="Jean Paul" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Divorce / Instance -->
+      <div class="conditional ${['D','I'].includes(sit)?'show':''}" id="blk-divorce-${idx}">
+        <div class="row row-2">
+          <div class="field">
+            <label>Tribunal (ville)</label>
+            <input type="text" data-field="tribunal" value="${esc(p.tribunal)}" placeholder="Paris" />
+          </div>
+          <div class="field">
+            <label>Date du jugement</label>
+            <input type="date" data-field="dateDivorce" value="${p.dateDivorce}" />
+          </div>
+        </div>
+        <div class="row row-2">
+          <div class="field">
+            <label>Nom de l'ex-conjoint</label>
+            <input type="text" data-field="nomConjoint" value="${esc(p.nomConjoint)}" placeholder="MARTIN" />
+          </div>
+          <div class="field">
+            <label>Prénom(s) de l'ex-conjoint</label>
+            <input type="text" data-field="prenomsConjoint" value="${esc(p.prenomsConjoint)}" placeholder="Jean Paul" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Veuf/Veuve -->
+      <div class="conditional ${sit==='V'?'show':''}" id="blk-veuf-${idx}">
+        <div class="row row-2">
+          <div class="field">
+            <label>Nom du conjoint décédé</label>
+            <input type="text" data-field="nomVeuf" value="${esc(p.nomVeuf)}" placeholder="MARTIN" />
+          </div>
+          <div class="field">
+            <label>Prénom(s) du conjoint décédé</label>
+            <input type="text" data-field="prenomsVeuf" value="${esc(p.prenomsVeuf)}" placeholder="Jean Paul" />
+          </div>
+        </div>
+      </div>
+
+      <!-- PACS -->
+      <div class="conditional ${sit==='P'?'show':''}" id="blk-pacs-${idx}">
+        <div class="row row-3">
+          <div class="field">
+            <label>Date du PACS</label>
+            <input type="date" data-field="datePacs" value="${p.datePacs}" />
+          </div>
+          <div class="field">
+            <label>Code postal</label>
+            <input type="text" data-field="cpPacs" value="${esc(p.cpPacs)}" placeholder="75001" />
+          </div>
+          <div class="field">
+            <label>Commune</label>
+            <input type="text" data-field="villePacs" value="${esc(p.villePacs)}" placeholder="Paris" />
+          </div>
+        </div>
+        <div class="row row-2">
+          <div class="field">
+            <label>Nom du partenaire</label>
+            <input type="text" data-field="nomConjoint" value="${esc(p.nomConjoint)}" placeholder="MARTIN" />
+          </div>
+          <div class="field">
+            <label>Prénom(s) du partenaire</label>
+            <input type="text" data-field="prenomsConjoint" value="${esc(p.prenomsConjoint)}" placeholder="Jean Paul" />
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>`;
+}
+
+function renderForms() {
+  const container = document.getElementById('formsContainer');
+  container.innerHTML = persons.map((p, i) => renderForm(p, i)).join('');
+  bindFormEvents();
+}
+
+function renderAll() {
+  renderTabs();
+  renderForms();
+}
+
+function bindFormEvents() {
+  document.querySelectorAll('[data-field]').forEach(el => {
+    const idx = parseInt(el.closest('[data-idx]').dataset.idx);
+    el.addEventListener('change', () => {
+      const field = el.dataset.field;
+      if (el.type === 'checkbox') persons[idx][field] = el.checked;
+      else persons[idx][field] = el.value;
+      if (field === 'nom') renderTabs();
+    });
+    el.addEventListener('input', () => {
+      if (el.dataset.field === 'nom') {
+        persons[idx].nom = el.value;
+        renderTabs();
+      }
+    });
+  });
+
+  document.querySelectorAll('.sit-btn').forEach(btn => {
+    const idx = parseInt(btn.closest('[data-idx]').dataset.idx);
+    btn.addEventListener('click', () => {
+      persons[idx].situation = btn.dataset.sit;
+      renderForms();
+    });
+  });
+}
+
+// ─── Gestion personnes ───────────────────────────────────
+document.getElementById('btnAddPerson').addEventListener('click', () => {
+  persons.push(createPerson());
+  activeIdx = persons.length - 1;
+  renderAll();
+});
+
+function removePerson() {
+  if (persons.length <= 1) return;
+  persons.splice(activeIdx, 1);
+  activeIdx = Math.max(0, activeIdx - 1);
+  renderAll();
+}
+
+// ─── Génération XML ───────────────────────────────────────
+function esc(s) { return (s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function formatDate(d) {
+  if (!d) return '';
+  return d.replace(/-/g, '');
+}
+
+function buildXML(xmlText) { return xmlText; }
+
+function collectData() {
+  return persons.map((p, i) => ({ ...p, _idx: i }));
+}
+
+document.getElementById('btnGenerate').addEventListener('click', async () => {
+  const btn = document.getElementById('btnGenerate');
+  const note = document.getElementById('genNote');
+  const resultBox = document.getElementById('resultBox');
+  const xmlOut = document.getElementById('xmlOut');
+  const errorMsg = document.getElementById('errorMsg');
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Génération en cours…';
+  note.textContent = '';
+  resultBox.style.display = 'none';
+  errorMsg.style.display = 'none';
+
+  const data = collectData();
+
+  // Construire le prompt
+  const prompt = `Tu es un assistant notarial. Génère un fichier XML iNot (format import généalogiste Genapi) à partir des données suivantes.
+
+RÈGLES XML iNot :
+- Structure : <?xml version="1.0" encoding="utf-8"?><iNova><iNot><Customer><Folder>...<\/Folder><\/Customer><\/iNot><\/iNova>
+- Une balise <Person info=""> par personne
+- NUMERO : 10000001, 10000002, etc.
+- TYPE : PP
+- Noms en MAJUSCULES, prénoms avec 1ère lettre majuscule
+- ACCORD : M (masculin) ou F (féminin) selon civilité
+- CODETITRE : M. / MME / MELLE
+- ETAT : C=célibataire, M=marié, D=divorcé, V=veuf, I=instance divorce, P=pacsé, S=séparé corps
+- HISTORIQUE : O si événement marital, N sinon
+- DATNA, DATMA, DAMAMA : format AAAAMMJJ
+- Régime : 4=sans contrat après 1966, 33=séparation biens, 32=communauté universelle, 35=participation acquêts, 30=communauté réduite acquêts
+- DEPTDO : nom du département (ex: Paris, Hérault)
+- HistoriqueMarital : vide si célibataire, sinon <Evenement> avec COTYMA, DAMAMA, LVT1MA, LNCOMA, LPCOMA
+- Pour marié : HISTORIQUE=O, Evenement COTYMA=M
+- Pour divorcé : HISTORIQUE=O, Evenement COTYMA=D (tribunal dans LVT1MA)
+- Pour veuf : HISTORIQUE=O, Evenement COTYMA=V
+- Pour pacsé : HISTORIQUE=O, Evenement COTYMA=P
+- Tous les champs obligatoires doivent être présents même vides
+- Adresse fiscale = adresse domicile si non précisée
+
+DONNÉES DES PERSONNES :
+${JSON.stringify(data, null, 2)}
+
+Réponds UNIQUEMENT avec le XML complet, sans texte avant ni après, sans balises markdown.`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 4000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!resp.ok) throw new Error('Erreur API : ' + resp.status);
+    const json = await resp.json();
+    const xml = json.content?.[0]?.text?.trim() || '';
+
+    if (!xml.startsWith('<?xml')) throw new Error('Réponse inattendue du modèle');
+
+    xmlOut.textContent = xml;
+    resultBox.style.display = 'block';
+
+    // Préparer le téléchargement
+    const noms = persons.map(p => (p.nom||'inconnu').toLowerCase()).join('_');
+    const filename = `import_inot_${noms}.XML`;
+    document.getElementById('btnDownload').onclick = () => {
+      const blob = new Blob([xml], { type: 'application/xml' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+    };
+
+    note.textContent = `${persons.length} personne${persons.length > 1 ? 's' : ''} générée${persons.length > 1 ? 's' : ''}`;
+  } catch(e) {
+    errorMsg.textContent = e.message || 'Une erreur est survenue.';
+    errorMsg.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Générer le XML';
+  }
+});
+
+// ─── Init ────────────────────────────────────────────────
+renderAll();
+</script>
+</body>
+</html>
