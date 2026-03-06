@@ -71,30 +71,31 @@
   </div>
 
   <footer>
-    <span>Juste · Usage interne au cabinet</span><br>
-    <a href="#" id="rgpd-link" style="color:#ccc;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:underline;margin-top:.3rem;display:inline-block;">Mentions RGPD</a>
-  </footer>
+    <div style="max-width:460px;margin:0 auto;padding:3rem 1.5rem 2rem;border-top:1px solid #f0f0f0;">
 
-  <div id="rgpd-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;">
-    <div style="background:#fff;border-radius:6px;max-width:540px;width:90%;padding:2.5rem;position:relative;max-height:85vh;overflow-y:auto;margin:auto;margin-top:5vh;">
-      <button id="rgpd-close" style="position:absolute;top:1rem;right:1.2rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#999;">&#x2715;</button>
-      <h2 style="font-size:1rem;font-weight:400;margin-bottom:1.5rem;">Information sur le traitement des données</h2>
-      <div style="font-size:.88rem;color:#555;line-height:1.8;">
-        <p style="margin-bottom:1rem;"><strong style="color:#111;font-weight:500;">Responsable du traitement</strong><br>
-        Cet outil est mis en œuvre par le cabinet notarial pour un usage strictement interne. Il ne collecte aucune donnée à des fins commerciales.</p>
-        <p style="margin-bottom:1rem;"><strong style="color:#111;font-weight:500;">Données traitées</strong><br>
-        Les documents déposés (pièces d'identité, extraits de comparution) sont transmis à l'API Anthropic afin de procéder à l'extraction automatique des informations nécessaires à la création de fiches clients dans le logiciel iNot.</p>
-        <p style="margin-bottom:1rem;"><strong style="color:#111;font-weight:500;">Sous-traitant : Anthropic</strong><br>
-        Anthropic (San Francisco, États-Unis) traite les données en qualité de sous-traitant. Conformément à sa politique API, les données transmises ne sont pas utilisées pour l'entraînement de ses modèles et ne sont pas conservées au-delà de 30 jours. Les transferts vers les États-Unis sont encadrés par les clauses contractuelles types de la Commission européenne.</p>
-        <p style="margin-bottom:1rem;"><strong style="color:#111;font-weight:500;">Hébergement</strong><br>
-        L'application est hébergée sur Render (San Francisco, États-Unis). Les fichiers déposés ne sont jamais écrits sur disque et sont supprimés de la mémoire immédiatement après traitement. Seuls des journaux techniques (date, heure, taille des requêtes) sont conservés par Render.</p>
-        <p style="margin-bottom:1rem;"><strong style="color:#111;font-weight:500;">Base légale</strong><br>
-        Le traitement est fondé sur l'intérêt légitime du cabinet à automatiser la saisie de données dans le cadre de l'exercice de sa mission notariale.</p>
-        <p><strong style="color:#111;font-weight:500;">Droits des personnes</strong><br>
-        Toute personne concernée peut exercer ses droits d'accès, de rectification et d'effacement auprès du cabinet notarial. Compte tenu de l'absence de conservation des données au-delà du traitement immédiat, ces droits s'exercent principalement auprès d'Anthropic via <a href="https://www.anthropic.com/privacy" target="_blank" style="color:#111;">anthropic.com/privacy</a>.</p>
-      </div>
+      <p style="font-size:.85rem;color:#555;line-height:1.8;margin-bottom:2rem;">
+        <strong style="color:#111;font-weight:500;">Mode d'emploi</strong><br>
+        Déposez une photo ou un scan d'une pièce d'identité (carte nationale, passeport) ou d'un extrait de comparution. 
+        Vous pouvez également faire une capture d'écran et la déposer directement. 
+        L'outil génère autant de fiches que de personnes identifiées dans le document. 
+        Téléchargez le fichier XML puis importez-le dans iNot via <em>Fichier → Import généalogiste</em>.
+      </p>
+
+      <p style="font-size:.8rem;color:#888;line-height:1.8;margin-bottom:1.5rem;">
+        <strong style="color:#555;font-weight:500;">Traitement des données</strong><br>
+        Les documents déposés sont transmis à l'API Anthropic pour analyse et ne sont jamais écrits sur disque. 
+        Anthropic ne conserve pas les données au-delà de 30 jours et ne les utilise pas pour entraîner ses modèles. 
+        L'application est hébergée sur Render (États-Unis). 
+        Les transferts sont encadrés par les clauses contractuelles types de la Commission européenne.
+      </p>
+
+      <p style="font-size:.75rem;color:#bbb;line-height:1.6;">
+        Responsable du traitement : cabinet notarial · Usage strictement interne · 
+        Droits d'accès et rectification : <a href="https://www.anthropic.com/privacy" target="_blank" style="color:#bbb;">anthropic.com/privacy</a>
+      </p>
+
     </div>
-  </div>
+  </footer>
 
   <script>
     let currentFile = null;
@@ -207,11 +208,6 @@
 
     } // fin doGenerate
 
-    // RGPD modal
-    const rgpdModal = document.getElementById('rgpd-modal');
-    document.getElementById('rgpd-link').addEventListener('click', e => { e.preventDefault(); rgpdModal.style.display = 'block'; });
-    document.getElementById('rgpd-close').addEventListener('click', () => { rgpdModal.style.display = 'none'; });
-    rgpdModal.addEventListener('click', e => { if (e.target === rgpdModal) rgpdModal.style.display = 'none'; });
   </script>
 </body>
 </html>
