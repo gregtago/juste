@@ -31,6 +31,10 @@ IMPORTANT : Reponds UNIQUEMENT avec le XML brut, sans markdown, sans explication
 
 app.use(express.static(path.join(__dirname, "public")));
 
+app.get("/formulaire", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "formulaire.html"));
+});
+
 app.post("/api/generate", upload.fields([{ name: "file", maxCount: 1 }, { name: "recaptchaToken", maxCount: 1 }]), async (req, res) => {
   try {
     // Verification reCAPTCHA
